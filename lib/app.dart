@@ -35,6 +35,7 @@ class _AppView extends StatelessWidget {
         return MaterialApp.router(
           title: "Delivery App",
           theme: lightTheme,
+          darkTheme: darkTheme,
           themeMode: themeMode,
           routerConfig: appRouter,
         );

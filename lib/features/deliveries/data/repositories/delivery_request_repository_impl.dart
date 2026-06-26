@@ -86,12 +86,15 @@ class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository {
   Future<Either<AppFailure, List<DeliveryRequest>>> filterByStatus(
     DeliveryStatus? status,
   ) async {
+    if (status == null) {
+      return getAll();
+    }
     try {
       final db = await _dbHelper.database;
       final rows = await db.query(
         'delivery_requests',
         where: 'status = ?',
-        whereArgs: [status!.toDbString()],
+        whereArgs: [status.toDbString()],
         orderBy: 'created_at DESC',
       );
 
@@ -154,6 +157,24 @@ class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository {
         return left(UnexpectedFailure(cause: e.toString()));
       }
     });
+  }
+
+  @override
+  Future<Either<AppFailure, Unit>> updateStatus(int id, DeliveryStatus status) async {
+    try {
+      final db = await _dbHelper.database;
+      await db.update(
+        'delivery_requests',
+        {'status': status.toDbString()},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+      return right(unit);
+    } on DatabaseException catch (e) {
+      return left(DatabaseFailure(cause: e.toString()));
+    } catch (e) {
+      return left(UnexpectedFailure(cause: e.toString()));
+    }
   }
 
   @override

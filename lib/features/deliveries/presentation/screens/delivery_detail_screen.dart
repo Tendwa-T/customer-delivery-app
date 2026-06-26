@@ -19,26 +19,32 @@ class DeliveryDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (request != null) {
-      return _DetailView(request: request!);
-    }
-
     return BlocBuilder<DeliveryBloc, DeliveryState>(
       builder: (context, state) {
+        DeliveryRequest? currentRequest;
+
         if (state is DeliveryLoaded) {
-          final found = state.requests.cast<DeliveryRequest?>().firstWhere(
-                (r) => r?.id == deliveryId,
-                orElse: () => null,
-              );
-          if (found != null) {
-            return _DetailView(request: found);
-          }
+          currentRequest = state.requests.cast<DeliveryRequest?>().firstWhere(
+            (r) => r?.id == deliveryId,
+            orElse: () => null,
+          );
         }
+        currentRequest ??= request;
+
+        if (currentRequest != null) {
+          return _DetailView(request: currentRequest);
+        }
+
+        if (state is DeliveryLoading) {
+          return Scaffold(
+            appBar: AppBar(),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
         return Scaffold(
           appBar: AppBar(),
-          body: const Center(
-            child: Text('Delivery request not found'),
-          ),
+          body: const Center(child: Text('Delivery request not found')),
         );
       },
     );
@@ -61,11 +67,13 @@ class _DetailView extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
-              behavior: .floating,
+              behavior: SnackBarBehavior.floating,
               duration: const Duration(seconds: 3),
             ),
           );
-          context.goNamed(RouteNames.list);
+          if (state.message.toLowerCase().contains('delete')) {
+            context.goNamed(RouteNames.list);
+          }
         }
 
         if (state is DeliveryError) {
@@ -73,7 +81,7 @@ class _DetailView extends StatelessWidget {
             SnackBar(
               content: Text(state.message),
               backgroundColor: theme.colorScheme.error,
-              behavior: .floating,
+              behavior: SnackBarBehavior.floating,
               duration: const Duration(seconds: 3),
             ),
           );
@@ -188,6 +196,74 @@ class _DetailView extends StatelessWidget {
                   ),
                 ),
               ],
+              if (request.status == DeliveryStatus.pending ||
+                  request.status == DeliveryStatus.inTransit)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 32),
+                    Text(
+                      'Actions',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        if (request.status == DeliveryStatus.pending)
+                          Expanded(
+                            child: FilledButton.icon(
+                              onPressed: () {
+                                context.read<DeliveryBloc>().add(
+                                  UpdateDeliveryStatus(
+                                    request.id!,
+                                    DeliveryStatus.inTransit,
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.local_shipping_outlined),
+                              label: const Text('Start Transit'),
+                            ),
+                          ),
+                        if (request.status == DeliveryStatus.inTransit)
+                          Expanded(
+                            child: FilledButton.icon(
+                              onPressed: () {
+                                context.read<DeliveryBloc>().add(
+                                  UpdateDeliveryStatus(
+                                    request.id!,
+                                    DeliveryStatus.delivered,
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.check_circle_outline),
+                              label: const Text('Deliver'),
+                            ),
+                          ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: theme.colorScheme.error,
+                              side: BorderSide(color: theme.colorScheme.error),
+                            ),
+                            onPressed: () {
+                              context.read<DeliveryBloc>().add(
+                                UpdateDeliveryStatus(
+                                  request.id!,
+                                  DeliveryStatus.cancelled,
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.cancel_outlined),
+                            label: const Text('Cancel'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
@@ -205,11 +281,9 @@ class _DetailView extends StatelessWidget {
       context: context,
       builder: (diaContext) => AlertDialog(
         title: const Text('Delete Request? '),
-        content: Column(
-          children: [
-            const Text('This action cannot be undone'),
-            const Text('The delivery request will be permanently removed'),
-          ],
+        content: const Text(
+          'This action cannot be undone. '
+          'The delivery request will be deleted permanently',
         ),
         actions: [
           TextButton(

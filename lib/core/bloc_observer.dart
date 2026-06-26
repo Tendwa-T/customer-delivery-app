@@ -1,3 +1,4 @@
+import 'package:customer_delivery_app/core/utils/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SimpleBlocObserver extends BlocObserver {
@@ -9,21 +10,21 @@ class SimpleBlocObserver extends BlocObserver {
     Transition<dynamic, dynamic> transition,
   ) {
     super.onTransition(bloc, transition);
-    print('--- Bloc Transition ---');
-    print('Bloc: ${bloc.runtimeType}');
-    print('Event: ${transition.event}');
-    print('Current State: ${transition.currentState}');
-    print('Next State: ${transition.nextState}');
-    print('----------------------');
+    logger.d(
+      'Bloc: ${bloc.runtimeType}\n'
+      'Event: ${transition.event}\n'
+      'Current State: ${transition.currentState}\n'
+      'Next State: ${transition.nextState}',
+    );
   }
 
   @override
   void onError(BlocBase<dynamic> bloc, Object error, StackTrace stackTrace) {
-    print('--- Bloc Error ---');
-    print('Bloc: ${bloc.runtimeType}');
-    print('Error: $error');
-    print('StackTrace: $stackTrace');
-    print('-----------------');
+    logger.e(
+      'Bloc: ${bloc.runtimeType}',
+      error: error,
+      stackTrace: stackTrace,
+    );
     super.onError(bloc, error, stackTrace);
   }
 }

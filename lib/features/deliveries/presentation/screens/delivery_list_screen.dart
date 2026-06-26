@@ -45,18 +45,20 @@ class _DeliveryListScreenState extends State<DeliveryListScreen> {
                   hintText: 'Search deliveries ...',
                   leading: const Icon(Icons.search),
                   trailing: [
-                    if (_searchController.text.isEmpty)
+                    if (_searchController.text.isNotEmpty)
                       IconButton(
                         onPressed: () {
                           _searchController.clear();
+                          setState(() {});
                           context.read<DeliveryBloc>().add(
-                            const LoadDeliveries(),
+                            const SearchDeliveries(''),
                           );
                         },
                         icon: const Icon(Icons.close),
                       ),
                   ],
                   onChanged: (query) {
+                    setState(() {});
                     context.read<DeliveryBloc>().add(SearchDeliveries(query));
                   },
                 ),
@@ -87,6 +89,14 @@ class _DeliveryListScreenState extends State<DeliveryListScreen> {
                 behavior: SnackBarBehavior.floating,
               ),
             );
+          }
+          if (state is DeliveryLoaded) {
+            setState(() {
+              _activeFilter = state.activeFilter;
+              if (_searchController.text != state.query) {
+                _searchController.text = state.query;
+              }
+            });
           }
         },
         builder: (context, state) {

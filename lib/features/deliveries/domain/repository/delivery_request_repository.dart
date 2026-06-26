@@ -17,5 +17,7 @@ abstract class DeliveryRequestRepository {
 
   Future<Either<AppFailure, Unit>> update(DeliveryRequest req);
 
+  Future<Either<AppFailure, Unit>> updateStatus(int id, DeliveryStatus status);
+
   Future<Either<AppFailure, Unit>> delete(int id);
 }

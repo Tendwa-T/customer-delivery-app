@@ -6,6 +6,7 @@ import 'package:customer_delivery_app/features/deliveries/presentation/bloc/deli
 import 'package:customer_delivery_app/features/deliveries/presentation/widgets/form_section.dart';
 import 'package:customer_delivery_app/core/navigation/router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -159,23 +160,23 @@ class _DeliveryFormScreenState extends State<DeliveryFormScreen> {
                       prefixIcon: Icon(Icons.location_on_outlined),
                     ),
                     textCapitalization: TextCapitalization.words,
-                    validator: null,
+                    validator: Validators.pickupAddress,
                     autofocus: !widget.isEditing,
                     textInputAction: TextInputAction.next,
                   ),
                 ),
                 const SizedBox(height: 16),
                 FormSection(
-                  label: 'Pickup Details',
+                  label: 'Drop-off Details',
                   child: TextFormField(
                     controller: _deliveryController,
                     decoration: const InputDecoration(
-                      labelText: 'Pickup address',
+                      labelText: 'Drop off address',
                       hintText: 'e.g Langata rd, Nairobi',
                       prefixIcon: Icon(Icons.location_on),
                     ),
                     textCapitalization: TextCapitalization.words,
-                    validator: null,
+                    validator: Validators.deliveryAddress,
                     autofocus: !widget.isEditing,
                     textInputAction: TextInputAction.next,
                   ),
@@ -208,6 +209,11 @@ class _DeliveryFormScreenState extends State<DeliveryFormScreen> {
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d*\.?\d*'),
+                          ),
+                        ],
                         validator: Validators.packageWeight,
                         textInputAction: .done,
                         onFieldSubmitted: (_) => _submit(),

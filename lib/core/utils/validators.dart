@@ -11,7 +11,7 @@ class Validators {
     return null;
   }
 
-  static String? deliveryAddres(String? value) {
+  static String? deliveryAddress(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Delivery Address is required';
     }
@@ -38,6 +38,9 @@ class Validators {
     }
     if (parsed <= 0) {
       return 'Weight must be greater than 0';
+    }
+    if (parsed >= 500) {
+      return 'Too heavy, weight cannot be more than 500 kg';
     }
     return null;
   }

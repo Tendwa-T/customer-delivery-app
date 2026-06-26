@@ -38,7 +38,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 ThemeOptionTile(
                   title: 'Dark',
-                  subtitle: 'Alywa use Dark Mode',
+                  subtitle: 'Always use Dark Mode',
                   icon: Icons.dark_mode_outlined,
                   isSelected: state == ThemeMode.dark,
                   onTap: () => context.read<ThemeCubit>().setDark(),

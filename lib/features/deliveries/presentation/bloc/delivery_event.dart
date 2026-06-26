@@ -50,3 +50,12 @@ class FilterDeliveriesByStatus extends DeliveryEvent {
   @override
   List<Object?> get props => [status];
 }
+
+class UpdateDeliveryStatus extends DeliveryEvent {
+  const UpdateDeliveryStatus(this.id, this.status);
+  final int id;
+  final DeliveryStatus status;
+
+  @override
+  List<Object?> get props => [id, status];
+}

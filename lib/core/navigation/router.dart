@@ -16,8 +16,6 @@ class RouteNames {
   static const String settings = 'settings';
 }
 
-// ── Route paths ───────────────────────────────────────────────────────────────
-
 class RoutePaths {
   const RoutePaths._();
   static const String list = '/deliveries';
@@ -30,16 +28,12 @@ class RoutePaths {
   static String fullEdit(int id) => '/deliveries/$id/edit';
 }
 
-// ── Navigator keys ────────────────────────────────────────────────────────────
-
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _deliveriesNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'deliveries',
 );
 final _createNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'create');
 final _settingsNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'settings');
-
-// ── Router ────────────────────────────────────────────────────────────────────
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -49,7 +43,6 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state, navigationShell) =>
           AppShell(navShell: navigationShell),
       branches: [
-        // ── Tab 0: Deliveries ────────────────────────────────────────────────
         StatefulShellBranch(
           navigatorKey: _deliveriesNavigatorKey,
           routes: [
@@ -100,7 +93,6 @@ final GoRouter appRouter = GoRouter(
           ],
         ),
 
-        // ── Tab 2: Settings ──────────────────────────────────────────────────
         StatefulShellBranch(
           navigatorKey: _settingsNavigatorKey,
           routes: [
