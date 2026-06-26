@@ -1,89 +1,139 @@
 import 'package:customer_delivery_app/common/widgets/empty_state_widget.dart';
+import 'package:customer_delivery_app/common/widgets/error_state_widget.dart';
+import 'package:customer_delivery_app/core/navigation/router.dart';
+import 'package:customer_delivery_app/features/deliveries/domain/entity/delivery_request.dart';
+import 'package:customer_delivery_app/features/deliveries/presentation/bloc/delivery_bloc.dart';
+import 'package:customer_delivery_app/features/deliveries/presentation/widgets/delivery_card.dart';
+import 'package:customer_delivery_app/features/deliveries/presentation/widgets/filter_chips_row.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-class DeliveryListScreen extends StatelessWidget {
+class DeliveryListScreen extends StatefulWidget {
   const DeliveryListScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final dimensions = MediaQuery.sizeOf(context);
+  State<DeliveryListScreen> createState() => _DeliveryListScreenState();
+}
 
+class _DeliveryListScreenState extends State<DeliveryListScreen> {
+  final _searchController = TextEditingController();
+  DeliveryStatus? _activeFilter;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        label: Center(child: Icon(Icons.add)),
-      ),
       appBar: AppBar(
-        leading: Icon(
-          Icons.local_shipping_outlined,
-          color: theme.colorScheme.primary,
-        ),
-        title: Text(
-          'GS-Delivery',
-          style: theme.textTheme.titleLarge!.copyWith(
-            color: theme.colorScheme.primary,
-            fontWeight: FontWeight.bold,
+        title: const Text('Deliveries'),
+        backgroundColor: colorScheme.surface,
+        surfaceTintColor: colorScheme.primary,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(120),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: SearchBar(
+                  controller: _searchController,
+                  hintText: 'Search deliveries ...',
+                  leading: const Icon(Icons.search),
+                  trailing: [
+                    if (_searchController.text.isEmpty)
+                      IconButton(
+                        onPressed: () {
+                          _searchController.clear();
+                          context.read<DeliveryBloc>().add(
+                            const LoadDeliveries(),
+                          );
+                        },
+                        icon: const Icon(Icons.close),
+                      ),
+                  ],
+                  onChanged: (query) {
+                    context.read<DeliveryBloc>().add(SearchDeliveries(query));
+                  },
+                ),
+              ),
+              // Filter Chips
+              FilterChipsRow(
+                filter: _activeFilter,
+                onFilterChanged: (status) {
+                  setState(() {
+                    _activeFilter = status;
+                  });
+                  context.read<DeliveryBloc>().add(
+                    FilterDeliveriesByStatus(status),
+                  );
+                },
+              ),
+            ],
           ),
         ),
-        centerTitle: true,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsetsGeometry.symmetric(vertical: 12, horizontal: 8),
-            child: Column(
-              children: [
-                TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search_outlined),
-                    hintText: 'Search tracking number or address',
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  physics: ClampingScrollPhysics(),
-                  child: Row(
-                    children: [
-                      FilterChip(
-                        label: const Text("All Requests"),
-                        labelStyle: TextStyle(
-                          color: theme.colorScheme.onPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        onSelected: null,
-                        selected: true,
-                        selectedColor: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 4),
-                      FilterChip(
-                        label: const Text("Pending"),
-                        labelStyle: TextStyle(color: Colors.black),
-                        onSelected: null,
-                        selected: false,
-                        backgroundColor: Colors.white,
-                      ),
-                      const SizedBox(width: 4),
-                      FilterChip(
-                        label: const Text("In Transit"),
-                        onSelected: null,
-                        selected: false,
-                      ),
-                      const SizedBox(width: 4),
-                      FilterChip(
-                        label: const Text("Cancelled"),
-                        onSelected: null,
-                        selected: false,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
-          ),
-        ),
+      body: BlocConsumer<DeliveryBloc, DeliveryState>(
+        listener: (context, state) {
+          if (state is DeliveryError && state.isEditGuarded) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                duration: const Duration(seconds: 3),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is DeliveryLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is DeliveryEmpty) {
+            return EmptyStateWidget(
+              hasFilter:
+                  _activeFilter != null || _searchController.text.isNotEmpty,
+            );
+          }
+
+          if (state is DeliveryError && !state.isEditGuarded) {
+            return ErrorStateWidget(
+              message: state.message,
+              onRetry: () =>
+                  context.read<DeliveryBloc>().add(const LoadDeliveries()),
+            );
+          }
+
+          if (state is DeliveryLoaded) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<DeliveryBloc>().add(const LoadDeliveries());
+              },
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                separatorBuilder: (_, _) => const SizedBox(height: 8),
+                itemCount: state.requests.length,
+                itemBuilder: (context, index) {
+                  final req = state.requests[index];
+                  return DeliveryCard(
+                    request: req,
+                    onTap: () => context.goNamed(
+                      RouteNames.detail,
+                      pathParameters: {'id': req.id.toString()},
+                      extra: req,
+                    ),
+                  );
+                },
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

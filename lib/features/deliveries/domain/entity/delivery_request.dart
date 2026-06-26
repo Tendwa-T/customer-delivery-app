@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:equatable/equatable.dart';
 
 enum DeliveryStatus {
@@ -90,10 +88,8 @@ class DeliveryRequest extends Equatable {
     required this.packageCode,
     required this.pickUpAddress,
     required this.deliveryAddress,
-    required this.packageName,
-    this.packageDescription,
+    required this.packageDescription,
     required this.packageWeight,
-    required this.packageWeightUnit,
     this.status = DeliveryStatus.pending,
     required this.createdAt,
   });
@@ -102,10 +98,8 @@ class DeliveryRequest extends Equatable {
   final String packageCode;
   final String pickUpAddress;
   final String deliveryAddress;
-  final String packageName;
-  final String? packageDescription;
+  final String packageDescription;
   final double packageWeight;
-  final PackageWeightUnits packageWeightUnit;
   final DeliveryStatus status;
   final DateTime createdAt;
 
@@ -114,10 +108,8 @@ class DeliveryRequest extends Equatable {
     String? packageCode,
     String? pickUpAddress,
     String? deliveryAddress,
-    String? packageName,
     String? packageDescription,
     double? packageWeight,
-    PackageWeightUnits? packageWeightUnit,
     DeliveryStatus? status,
     DateTime? createdAt,
   }) {
@@ -125,11 +117,9 @@ class DeliveryRequest extends Equatable {
       id: id ?? this.id,
       pickUpAddress: pickUpAddress ?? this.pickUpAddress,
       deliveryAddress: deliveryAddress ?? this.deliveryAddress,
-      packageName: packageName ?? this.packageName,
       packageCode: packageCode ?? this.packageCode,
       packageDescription: packageDescription ?? this.packageDescription,
       packageWeight: packageWeight ?? this.packageWeight,
-      packageWeightUnit: packageWeightUnit ?? this.packageWeightUnit,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
     );
@@ -140,11 +130,9 @@ class DeliveryRequest extends Equatable {
     id,
     pickUpAddress,
     deliveryAddress,
-    packageName,
     packageCode,
     packageDescription,
     packageWeight,
-    packageWeightUnit,
     status,
     createdAt,
   ];

@@ -15,9 +15,7 @@ EventTransformer<SearchDeliveries> _debounceRestartable() {
 }
 
 class DeliveryBloc extends Bloc<DeliveryEvent, DeliveryState> {
-  DeliveryBloc({required DeliveryRequestRepository repository})
-    : _repository = repository,
-      super(const DeliveryInitial()) {
+  DeliveryBloc({required this._repository}) : super(const DeliveryInitial()) {
     on<LoadDeliveries>(_onLoad);
     on<AddDelivery>(_onAdd);
     on<UpdateDelivery>(_onUpdate);
@@ -48,7 +46,7 @@ class DeliveryBloc extends Bloc<DeliveryEvent, DeliveryState> {
 
     final result = await _repository.insert(event.req);
 
-    result.fold((failure) => emit(DeliveryError(failure: failure)), (_) {
+    result.fold((failure) => emit(DeliveryError(failure: failure)), (r) {
       emit(const DeliveryOperationSuccess('Delivery Request created'));
       add(const LoadDeliveries());
     });

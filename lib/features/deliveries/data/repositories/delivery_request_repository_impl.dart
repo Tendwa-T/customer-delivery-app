@@ -17,7 +17,7 @@ class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository {
     try {
       final db = await _dbHelper.database;
       final rows = await db.query(
-        'delivery_request',
+        'delivery_requests',
         orderBy: 'created_at DESC',
       );
 
@@ -37,7 +37,7 @@ class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository {
     try {
       final db = await _dbHelper.database;
       final rows = await db.query(
-        'delivery_request',
+        'delivery_requests',
         where: 'id = ?',
         whereArgs: [id],
         limit: 1,
@@ -61,14 +61,14 @@ class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository {
       final db = await _dbHelper.database;
       final pattern = '%${query.trim()}%';
       final rows = await db.query(
-        'delivery_request',
+        'delivery_requests',
         where: '''
 				pickup_address LIKE ? OR
 				delivery_address LIKE ? OR
-				package_name LIKE ? OR
+				package_description LIKE ? OR
 				package_code LIKE ?
 			''',
-        whereArgs: [pattern, pattern, pattern],
+        whereArgs: [pattern, pattern, pattern, pattern],
         orderBy: 'created_at DESC',
       );
 
@@ -89,7 +89,7 @@ class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository {
     try {
       final db = await _dbHelper.database;
       final rows = await db.query(
-        'delivery_request',
+        'delivery_requests',
         where: 'status = ?',
         whereArgs: [status!.toDbString()],
         orderBy: 'created_at DESC',
@@ -112,7 +112,7 @@ class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository {
     try {
       final db = await _dbHelper.database;
       final model = DeliveryRequestModel.fromEntity(req);
-      final id = await db.insert('delivery_request', model.toMap());
+      final id = await db.insert('delivery_requests', model.toMap());
 
       return right(req.copyWith(id: id));
     } on DatabaseException catch (e) {
@@ -142,7 +142,7 @@ class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository {
         final db = await _dbHelper.database;
         final model = DeliveryRequestModel.fromEntity(req);
         await db.update(
-          'delivery_request',
+          'delivery_requests',
           model.toMap(),
           where: 'id = ?',
           whereArgs: [req.id],
@@ -163,7 +163,7 @@ class DeliveryRequestRepositoryImpl implements DeliveryRequestRepository {
     return curr.fold((failure) => left(failure), (current) async {
       try {
         final db = await _dbHelper.database;
-        await db.delete('delivery_request', where: 'id = ?', whereArgs: [id]);
+        await db.delete('delivery_requests', where: 'id = ?', whereArgs: [id]);
         return right(unit);
       } on DatabaseException catch (e) {
         return left(DatabaseFailure(cause: e.toString()));

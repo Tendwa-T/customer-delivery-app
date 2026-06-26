@@ -17,7 +17,6 @@ class DeliveryLoading extends DeliveryState {
 
 const Object _filter = Object();
 
-// TODO: Add support for searching
 class DeliveryLoaded extends DeliveryState {
   const DeliveryLoaded({
     required this.requests,

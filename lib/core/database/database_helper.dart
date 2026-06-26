@@ -14,13 +14,11 @@ class DatabaseHelper {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			pickup_address TEXT NOT NULL,
 			delivery_address TEXT NOT NULL,
-			package_name TEXT NOT NULL,
 			package_code TEXT NOT NULL UNIQUE,
-			package_description TEXT ,
-			package_weight TEXT NOT NULL CHECK (package_weight > 0),
-			package_weight_unit TEXT NOT NULL,
+			package_description TEXT NOT NULL,
+			package_weight REAL NOT NULL CHECK (package_weight > 0),
 			status TEXT NOT NULL DEFAULT 'pending',
-			created_at TEXT NOT NULL,
+			created_at TEXT NOT NULL
 		)
 	''';
 
