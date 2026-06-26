@@ -1,3 +1,4 @@
+import 'package:customer_delivery_app/features/deliveries/presentation/screens/delivery_list_screen.dart';
 import 'package:customer_delivery_app/features/placeholder_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -24,7 +25,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RoutePaths.list,
       name: RouteNames.list,
-      builder: (context, state) => PlaceholderScreen(title: RouteNames.list),
+      builder: (context, state) => DeliveryListScreen(),
     ),
     GoRoute(
       path: RoutePaths.create,

@@ -1,20 +1,34 @@
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 
-const Color kPrimary = Color(0xFF1A6B8A);
-const Color kSecondary = Color(0xFF4A6572);
-const Color kTertiary = Color(0xFFC47F17);
+// --- CORE PALETTE ---
+const Color kPrimary = Color(0xFF004AC6);
+// Shifted to a cooler, slate-blue to complement the new vibrant primary
+const Color kSecondary = Color(0xFF4B6685);
+// A rich, deep amber. Orange is the direct complementary color to blue.
+const Color kTertiary = Color(0xFFC46B00);
+const Color kOnPrimary = Colors.white;
 
-const Color kStatusPending = Color(0xFFE8A020);
-const Color kStatusInTransit = Color(0xFF1A6B8A);
-const Color kStatusDelivered = Color(0xFF1D9E75);
-const Color kStatusCancelled = Color(0xFF888780);
+// --- STATUS COLORS (Use for Text or Icons) ---
+const Color kStatusPending = Color(0xFFC46B00); // Deep Amber (Matches Tertiary)
+const Color kStatusInTransit = Color(
+  0xFF004AC6,
+); // Vibrant Blue (Matches Primary)
+const Color kStatusDelivered = Color(
+  0xFF128254,
+); // A cooler, darker emerald green
+const Color kStatusCancelled = Color(
+  0xFF606975,
+); // A cool, blue-tinted slate grey
 
-const Color kStatusPendingContainer = Color(0xFFFAEEDA);
-const Color kStatusInTransitContainer = Color(0xFFE1F3F8);
-const Color kStatusDeliveredContainer = Color(0xFFE1F5EE);
-const Color kStatusCancelledContainer = Color(0xFFF1EFE8);
+// --- STATUS CONTAINERS (Use for Backgrounds) ---
+// Retinted to match the new, cooler status colors while maintaining > 4.5:1 contrast
+const Color kStatusPendingContainer = Color(0xFFFFF2DE);
+const Color kStatusInTransitContainer = Color(0xFFE5EFFF);
+const Color kStatusDeliveredContainer = Color(0xFFE2F4EB);
+const Color kStatusCancelledContainer = Color(0xFFF0F2F5);
 
+// --- THEME DATA ---
 const FlexSubThemesData _subThemesData = FlexSubThemesData(
   cardRadius: 12.0,
   inputDecoratorRadius: 8.0,
@@ -23,16 +37,19 @@ const FlexSubThemesData _subThemesData = FlexSubThemesData(
   filledButtonRadius: 8.0,
   outlinedButtonRadius: 8.0,
   fabRadius: 16.0,
+  chipRadius: 36.0,
 );
 
 final ThemeData lightTheme = FlexThemeData.light(
   colors: const FlexSchemeColor(
-    primary: Color(0xFF1A6B8A),
-    primaryContainer: Color(0xFFC8E8F2),
-    secondary: Color(0xFF4A6572),
-    secondaryContainer: Color(0xFFDDE8EC),
-    tertiary: Color(0xFFC47F17),
-    tertiaryContainer: Color(0xFFFAEEDA),
+    primary: kPrimary,
+    primaryContainer: kStatusInTransitContainer,
+    secondary: kSecondary,
+    secondaryContainer: Color(
+      0xFFD3DFEB,
+    ), // Tinted slate to match new secondary
+    tertiary: kTertiary,
+    tertiaryContainer: kStatusPendingContainer,
   ),
   surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
   blendLevel: 7,

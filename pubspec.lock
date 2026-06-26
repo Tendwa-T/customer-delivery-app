@@ -120,6 +120,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fpdart:
+    dependency: "direct main"
+    description:
+      name: fpdart
+      sha256: f8e9d0989ba293946673e382c59ac513e30cb6746a9452df195f29e3357a73d4
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   go_router:
     dependency: "direct main"
     description:
@@ -201,7 +209,7 @@ packages:
     source: hosted
     version: "1.0.0"
   path:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path
       sha256: "75cca69d1490965be98c73ceaea117e8a04dd21217b37b292c9ddbec0d955bc5"
@@ -301,6 +309,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  stream_transform:
+    dependency: "direct main"
+    description:
+      name: stream_transform
+      sha256: ad47125e588cfd37a9a7f86c7d6356dde8dfe89d071d293f80ca9e9273a33871
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   string_scanner:
     dependency: transitive
     description:
