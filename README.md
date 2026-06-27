@@ -172,7 +172,7 @@ CREATE INDEX idx_code ON delivery_requests (package_code);
 ### 1. Clone the Repository
 
 ```bash
-git clone git@github.com:Tendwa-T/customer-delivery-app.git
+git clone https://github.com/Tendwa-T/customer-delivery-app.git
 cd customer_delivery_app
 ```
 
