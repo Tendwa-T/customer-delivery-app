@@ -43,6 +43,8 @@ dependencies:
     fpdart: ^1.2.0
     stream_transform: ^2.1.1
     logger: ^2.7.0
+    flutter_launcher_icons: ^0.14.4
+    flutter_native_splash: ^2.4.8
 
 dev_dependencies:
     flutter_test:
@@ -66,8 +68,8 @@ flutter:
     uses-material-design: true
 
     # To add assets to your application, add an assets section, like this:
-    # assets:
-    #   - images/a_dot_burr.jpeg
+    assets:
+        - assets/
     #   - images/a_dot_ham.jpeg
 
     # An image asset can refer to one or more resolution-specific "variants", see
@@ -95,3 +97,15 @@ flutter:
     #
     # For details regarding fonts from package dependencies,
     # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+    android: "launcher_icon"
+    ios: true
+    image_path: "assets/logo/logo.png"
+
+flutter_native_splash:
+    # The background color of the splash screen
+    color: "#ffffff" # Or use your primary blue: "#004AC6"
+
+    # The path to your logo (you can use the exact same image you used for the app icon)
+    image: "assets/logo/logo.png"
